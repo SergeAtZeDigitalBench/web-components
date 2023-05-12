@@ -1,0 +1,10 @@
+{
+  "name": "web-components",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Serge Basangovs <sergeb@thedigitalbench.co.uk>",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
+}
