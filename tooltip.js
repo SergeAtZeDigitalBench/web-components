@@ -5,19 +5,28 @@ class Tooltip extends HTMLElement {
   constructor() {
     super();
     this.#tooltipText = "Some default text";
+    this.attachShadow({ mode: "open" });
+    this.shadowRoot.innerHTML = `
+      <style>
+        div {
+          color: white;
+          background-color: black;
+          position: absolute;
+          z-index: 10;
+        }
+      </style>
+      <slot>Default text</slot>
+      <span>(?)</span>
+    `;
   }
 
   connectedCallback() {
-    const tooltipIcon = document.createElement("span");
-    tooltipIcon.textContent = ` (?)`;
-
     if (this.hasAttribute("text")) {
       this.#tooltipText = this.getAttribute("text");
     }
 
     this.addEventListener("mouseenter", this.#showTooltip);
     this.addEventListener("mouseleave", this.#hideTooltip);
-    this.appendChild(tooltipIcon);
     this.style.position = "relative";
   }
 
@@ -29,15 +38,11 @@ class Tooltip extends HTMLElement {
   #showTooltip = (event) => {
     this.#tooltipContainer = document.createElement("div");
     this.#tooltipContainer.textContent = this.#tooltipText;
-    this.#tooltipContainer.style.backgroundColor = "black";
-    this.#tooltipContainer.style.color = "white";
-    this.#tooltipContainer.style.position = "absolute";
-    this.#tooltipContainer.style.zIndex = "10";
-    this.appendChild(this.#tooltipContainer);
+    this.shadowRoot.appendChild(this.#tooltipContainer);
   };
 
   #hideTooltip = (event) => {
-    this.removeChild(this.#tooltipContainer);
+    this.shadowRoot.removeChild(this.#tooltipContainer);
   };
 }
 
