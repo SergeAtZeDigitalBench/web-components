@@ -1,6 +1,7 @@
 class Tooltip extends HTMLElement {
   #tooltipContainer;
   #tooltipText;
+  #tooltipIcon;
 
   constructor() {
     super();
@@ -40,6 +41,7 @@ class Tooltip extends HTMLElement {
           padding: 0.25rem;
           border-radius: 50%;
           text-align: center;
+          cursor: pointer;
         }
       </style>
       <slot>Default text</slot>
@@ -51,15 +53,28 @@ class Tooltip extends HTMLElement {
     if (this.hasAttribute("text")) {
       this.#tooltipText = this.getAttribute("text");
     }
+    this.#tooltipIcon = this.shadowRoot.querySelector("span.icon");
 
-    this.addEventListener("mouseenter", this.#showTooltip);
-    this.addEventListener("mouseleave", this.#hideTooltip);
+    this.#tooltipIcon.addEventListener("mouseenter", this.#showTooltip);
+    this.#tooltipIcon.addEventListener("mouseleave", this.#hideTooltip);
     this.style.position = "relative";
   }
 
   disconnectedCallback() {
-    this.removeEventListener("mouseenter", this.#showTooltip);
-    this.removeEventListener("mouseleave", this.#hideTooltip);
+    this.#tooltipIcon.removeEventListener("mouseenter", this.#showTooltip);
+    this.#tooltipIcon.removeEventListener("mouseleave", this.#hideTooltip);
+  }
+
+  attributeChangedCallback(name, prevValue, newValue) {
+    console.log({ name, prevValue, newValue });
+    if (newValue === prevValue) return;
+    if (name === "text") {
+      this.#tooltipText = newValue;
+    }
+  }
+
+  static get observedAttributes() {
+    return ["text"];
   }
 
   #showTooltip = (event) => {
