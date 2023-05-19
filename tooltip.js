@@ -23,7 +23,7 @@ class Tooltip extends HTMLElement {
           top: 1.5rem;
           left: 0.75rem;
         }
-        :host() {
+        :host {
           position: relative;
         }
         :host(.background) {
