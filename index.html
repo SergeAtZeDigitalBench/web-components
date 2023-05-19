@@ -7,17 +7,27 @@
     <title>Web Components</title>
     <script src="./tooltip.js"></script>
     <script src="./confirm-link.js"></script>
+    <style>
+      :root {
+        --color-primary: #5eebf2;
+        font-family: sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+    </style>
   </head>
   <body>
     <div>
-      Hellow guest!
-      <my-sb-tooltip text="WebComponents is a set of standards">
-        <p>Web components are awesome!</p>
+      <my-sb-tooltip
+        class="background"
+        text="WebComponents is a set of standards"
+      >
+        <span class="highlight">Web components</span>
       </my-sb-tooltip>
+      are awesome!
     </div>
-    <div>
-      <my-sb-tooltip></my-sb-tooltip>
-    </div>
+    <my-sb-tooltip></my-sb-tooltip>
     <a is="sb-confirm-link" href="https://www.google.com">google</a>
   </body>
 </html>
