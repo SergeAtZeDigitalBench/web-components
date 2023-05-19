@@ -2,9 +2,11 @@ class Tooltip extends HTMLElement {
   #tooltipContainer;
   #tooltipText;
   #tooltipIcon;
+  #tooltipVisible;
 
   constructor() {
     super();
+    this.#tooltipVisible = false;
     this.#tooltipText = "Some default text";
     this.attachShadow({ mode: "open" });
     this.shadowRoot.innerHTML = `
@@ -20,6 +22,9 @@ class Tooltip extends HTMLElement {
           box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.26);
           top: 1.5rem;
           left: 0.75rem;
+        }
+        :host() {
+          position: relative;
         }
         :host(.background) {
           background: var(--color-primary, #ccc);
@@ -44,7 +49,7 @@ class Tooltip extends HTMLElement {
           cursor: pointer;
         }
       </style>
-      <slot>Default text</slot>
+      <slot>Default content</slot>
       <span class="icon">?</span>
     `;
   }
@@ -57,7 +62,6 @@ class Tooltip extends HTMLElement {
 
     this.#tooltipIcon.addEventListener("mouseenter", this.#showTooltip);
     this.#tooltipIcon.addEventListener("mouseleave", this.#hideTooltip);
-    this.style.position = "relative";
   }
 
   disconnectedCallback() {
@@ -66,7 +70,6 @@ class Tooltip extends HTMLElement {
   }
 
   attributeChangedCallback(name, prevValue, newValue) {
-    console.log({ name, prevValue, newValue });
     if (newValue === prevValue) return;
     if (name === "text") {
       this.#tooltipText = newValue;
@@ -77,14 +80,26 @@ class Tooltip extends HTMLElement {
     return ["text"];
   }
 
+  #render = () => {
+    if (this.#tooltipVisible) {
+      this.#tooltipContainer = document.createElement("div");
+      this.#tooltipContainer.textContent = this.#tooltipText;
+      this.shadowRoot.appendChild(this.#tooltipContainer);
+    } else {
+      if (this.#tooltipContainer) {
+        this.shadowRoot.removeChild(this.#tooltipContainer);
+      }
+    }
+  };
+
   #showTooltip = (event) => {
-    this.#tooltipContainer = document.createElement("div");
-    this.#tooltipContainer.textContent = this.#tooltipText;
-    this.shadowRoot.appendChild(this.#tooltipContainer);
+    this.#tooltipVisible = true;
+    this.#render();
   };
 
   #hideTooltip = (event) => {
-    this.shadowRoot.removeChild(this.#tooltipContainer);
+    this.#tooltipVisible = false;
+    this.#render();
   };
 }
 
